@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <!-- เพิ่ม meta viewport สำหรับ responsive -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Nop's Converter</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fira+Mono:wght@400;700&display=swap');
+    body {
+      background-color: #181c20;
+      color: #e0e0e0;
+      font-family: 'Fira Mono', 'Consolas', 'Menlo', 'Monaco', monospace;
+      /* ปรับ padding สำหรับจอเล็ก */
+      padding-left: 0;
+      padding-right: 0;
+    }
+    .form-control, .form-select, .form-range {
+      background-color: #23272b;
+      color: #e0e0e0;
+      border-color: #222c36;
+      font-family: inherit;
+    }
+    .form-control:focus, .form-select:focus, .form-range:focus {
+      background-color: #23272b;
+      color: #fff;
+      border-color: #3b4252;
+      box-shadow: 0 0 0 0.2rem #2d3640;
+    }
+    .btn-primary, .btn-success, .btn-secondary {
+      border-radius: 1.5rem;
+      padding: 0.6rem 2.2rem;
+      font-size: 1.15rem;
+      font-family: inherit;
+      font-weight: bold;
+      letter-spacing: 1px;
+      box-shadow: 0 2px 8px #0003;
+      border-width: 0;
+      transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+    }
+    .btn-primary {
+      background-color: #2e7d3a;
+      color: #fff;
+    }
+    .btn-primary:hover, .btn-primary:focus {
+      background-color: #388e3c;
+      color: #fff;
+      box-shadow: 0 4px 16px #2e7d3a55;
+    }
+    .btn-success {
+      background-color: #43e97b;
+      color: #16241a;
+    }
+    .btn-success:hover, .btn-success:focus {
+      background-color: #2ecc40;
+      color: #fff;
+      box-shadow: 0 4px 16px #43e97b55;
+    }
+    .btn-secondary {
+      background-color: #1a3a22;
+      color: #d0ffd0;
+    }
+    .btn-secondary:hover, .btn-secondary:focus {
+      background-color: #1e2e22;
+      color: #fff;
+      box-shadow: 0 4px 16px #1a3a2255;
+    }
+    .progress-backdrop {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(24,28,32,0.85);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .progress {
+      background-color: #23272b;
+      border-radius: 0.5rem;
+      box-shadow: 0 2px 8px #0004;
+    }
+    .progress-bar {
+      background: linear-gradient(90deg, #4ecdc4 0%, #2d3640 100%);
+      color: #181c20;
+      font-weight: bold;
+      font-family: inherit;
+      font-size: 1.2rem;
+      letter-spacing: 1px;
+    }
+    .pixel-progress {
+      height: 2rem;
+      background-color: #23272b;
+      border-radius: 0.5rem;
+      overflow: hidden;
+      position: relative;
+    }
+    .pixel-progress-bar {
+      background: linear-gradient(90deg, #4ecdc4 0%, #2d3640 100%);
+      color: #181c20;
+      font-weight: bold;
+      font-family: inherit;
+      font-size: 1.2rem;
+      letter-spacing: 1px;
+      height: 100%;
+      transition: width 0.2s;
+    }
+    .range-value {
+      font-weight: bold;
+      margin-left: 10px;
+      color: #4ecdc4;
+      font-family: inherit;
+    }
+    .form-range::-webkit-slider-thumb {
+      background: #4ecdc4;
+    }
+    .form-range::-moz-range-thumb {
+      background: #4ecdc4;
+    }
+    .form-range::-ms-thumb {
+      background: #4ecdc4;
+    }
+    .form-range::-webkit-slider-runnable-track {
+      background: #222c36;
+    }
+    .form-range::-moz-range-track {
+      background: #222c36;
+    }
+    .form-range::-ms-fill-lower {
+      background: #222c36;
+    }
+    .form-range::-ms-fill-upper {
+      background: #222c36;
+    }
+    label, h1 {
+      font-weight: bold;
+      letter-spacing: 1px;
+      color: #4ecdc4;
+      font-family: inherit;
+    }
+    h1 {
+      font-size: 2.2rem;
+      margin-bottom: 2rem;
+      color: #4ecdc4;
+      text-shadow: 0 2px 8px #0008;
+    }
+    .form-label {
+      color: #4ecdc4;
+    }
+    ::selection {
+      background: #4ecdc4;
+      color: #181c20;
+    }
+    /* Scrollbar styling for dark theme */
+    ::-webkit-scrollbar {
+      width: 10px;
+      background: #23272b;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #2d3640;
+      border-radius: 5px;
+    }
+    .custom-upload-wrapper {
+      width: 100%;
+      min-height: 48px;
+      position: relative;
+    }
+    .btn-upload {
+      background: linear-gradient(90deg, #43e97b 0%, #38b2ac 100%);
+      color: #181c20;
+      font-weight: bold;
+      border-radius: 1.5rem;
+      padding: 0.7rem 2.2rem;
+      font-size: 1.1rem;
+      font-family: inherit;
+      letter-spacing: 1px;
+      border: none;
+      box-shadow: 0 2px 8px #0003;
+      transition: background 0.25s, color 0.2s, box-shadow 0.2s, transform 0.15s, min-height 0.2s;
+      outline: none;
+      z-index: 1;
+      position: relative;
+      overflow: hidden;
+      min-height: 48px;
+      max-height: 48px;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow-x: hidden;
+    }
+    .btn-upload.filename-mode {
+      padding: 0.7rem 1.2rem;
+      font-size: 1rem;
+      min-height: 38px;
+      max-height: 38px;
+      white-space: nowrap;
+      overflow-x: auto;
+      text-overflow: ellipsis;
+    }
+    .btn-upload span.filename-text {
+      color: #181c20;
+      font-weight: normal;
+      font-size: 1rem;
+      margin-left: 4px;
+      margin-right: 4px;
+      vertical-align: middle;
+      max-width: 220px;
+      display: inline-block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .progress-backdrop {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(24,28,32,0.85);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .progress {
+      background-color: #23272b;
+      border-radius: 0.5rem;
+      box-shadow: 0 2px 8px #0004;
+    }
+    .progress-bar {
+      background: linear-gradient(90deg, #4ecdc4 0%, #2d3640 100%);
+      color: #181c20;
+      font-weight: bold;
+      font-family: inherit;
+      font-size: 1.2rem;
+      letter-spacing: 1px;
+    }
+    .pixel-progress {
+      height: 2rem;
+      background-color: #23272b;
+      border-radius: 0.5rem;
+      overflow: hidden;
+      position: relative;
+    }
+    .pixel-progress-bar {
+      background: linear-gradient(90deg, #4ecdc4 0%, #2d3640 100%);
+      color: #181c20;
+      font-weight: bold;
+      font-family: inherit;
+      font-size: 1.2rem;
+      letter-spacing: 1px;
+      height: 100%;
+      transition: width 0.2s;
+    }
+    .range-value {
+      font-weight: bold;
+      margin-left: 10px;
+      color: #4ecdc4;
+      font-family: inherit;
+    }
+    .form-range::-webkit-slider-thumb {
+      background: #4ecdc4;
+    }
+    .form-range::-moz-range-thumb {
+      background: #4ecdc4;
+    }
+    .form-range::-ms-thumb {
+      background: #4ecdc4;
+    }
+    .form-range::-webkit-slider-runnable-track {
+      background: #222c36;
+    }
+    .form-range::-moz-range-track {
+      background: #222c36;
+    }
+    .form-range::-ms-fill-lower {
+      background: #222c36;
+    }
+    .form-range::-ms-fill-upper {
+      background: #222c36;
+    }
+    label, h1 {
+      font-weight: bold;
+      letter-spacing: 1px;
+      color: #4ecdc4;
+      font-family: inherit;
+    }
+    h1 {
+      font-size: 2.2rem;
+      margin-bottom: 2rem;
+      color: #4ecdc4;
+      text-shadow: 0 2px 8px #0008;
+    }
+    .form-label {
+      color: #4ecdc4;
+    }
+    ::selection {
+      background: #4ecdc4;
+      color: #181c20;
+    }
+    /* Scrollbar styling for dark theme */
+    ::-webkit-scrollbar {
+      width: 10px;
+      background: #23272b;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #2d3640;
+      border-radius: 5px;
+    }
+    .custom-upload-wrapper {
+      width: 100%;
+      min-height: 48px;
+      position: relative;
+    }
+    .btn-upload {
+      background: linear-gradient(90deg, #43e97b 0%, #38b2ac 100%);
+      color: #181c20;
+      font-weight: bold;
+      border-radius: 1.5rem;
+      padding: 0.7rem 2.2rem;
+      font-size: 1.1rem;
+      font-family: inherit;
+      letter-spacing: 1px;
+      border: none;
+      box-shadow: 0 2px 8px #0003;
+      transition: background 0.25s, color 0.2s, box-shadow 0.2s, transform 0.15s, min-height 0.2s;
+      outline: none;
+      z-index: 1;
+      position: relative;
+      overflow: hidden;
+      min-height: 48px;
+      max-height: 48px;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow-x: hidden;
+    }
+    .btn-upload.filename-mode {
+      padding: 0.7rem 1.2rem;
+      font-size: 1rem;
+      min-height: 38px;
+      max-height: 38px;
+      white-space: nowrap;
+      overflow-x: auto;
+      text-overflow: ellipsis;
+    }
+    .btn-upload span.filename-text {
+      color: #181c20;
+      font-weight: normal;
+      font-size: 1rem;
+      margin-left: 4px;
+      margin-right: 4px;
+      vertical-align: middle;
+      max-width: 220px;
+      display: inline-block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .progress-backdrop {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(24,28,32,0.85);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .progress {
+      background-color: #23272b;
+      border-radius: 0.5rem;
+      box-shadow: 0 2px 8px #0004;
+    }
+    .progress-bar {
+      background: linear-gradient(90deg, #4ecdc4 0%, #2d3640 100%);
+      color: #181c20;
+      font-weight: bold;
+      font-family: inherit;
+      font-size: 1.2rem;
+      letter-spacing: 1px;
+    }
+    .pixel-progress {
+      height: 2rem;
+      background-color: #23272b;
+      border-radius: 0.5rem;
+      overflow: hidden;
+      position: relative;
+    }
+    .pixel-progress-bar {
+      background: linear-gradient(90deg, #4ecdc4 0%, #2d3640 100%);
+      color: #181c20;
+      font-weight: bold;
+      font-family: inherit;
+      font-size: 1.2rem;
+      letter-spacing: 1px;
+      height: 100%;
+      transition: width 0.2s;
+    }
+    .range-value {
+      font-weight: bold;
+      margin-left: 10px;
+      color: #4ecdc4;
+      font-family: inherit;
+    }
+    .form-range::-webkit-slider-thumb {
+      background: #4ecdc4;
+    }
+    .form-range::-moz-range-thumb {
+      background: #4ecdc4;
+    }
+    .form-range::-ms-thumb {
+      background: #4ecdc4;
+    }
+    .form-range::-webkit-slider-runnable-track {
+      background: #222c36;
+    }
+    .form-range::-moz-range-track {
+      background: #222c36;
+    }
+    .form-range::-ms-fill-lower {
+      background: #222c36;
+    }
+    .form-range::-ms-fill-upper {
+      background: #222c36;
+    }
+    label, h1 {
+      font-weight: bold;
+      letter-spacing: 1px;
+      color: #4ecdc4;
+      font-family: inherit;
+    }
+    h1 {
+      font-size: 2.2rem;
+      margin-bottom: 2rem;
+      color: #4ecdc4;
+      text-shadow: 0 2px 8px #0008;
+    }
+    .form-label {
+      color: #4ecdc4;
+    }
+    ::selection {
+      background: #4ecdc4;
+      color: #181c20;
+    }
+    /* Scrollbar styling for dark theme */
+    ::-webkit-scrollbar {
+      width: 10px;
+      background: #23272b;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #2d3640;
+      border-radius: 5px;
+    }
+    .custom-upload-wrapper {
+      width: 100%;
+      min-height: 48px;
+      position: relative;
+    }
+    .animated-title {
+      background: linear-gradient(90deg, #43e97b 0%, #38b2ac 50%, #43e97b 100%);
+      background-size: 200% auto;
+      color: #4ecdc4;
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: shine-move 2.5s linear infinite;
+      font-size: 2.2rem;
+      margin-bottom: 2rem;
+      font-weight: bold;
+      letter-spacing: 1px;
+      text-shadow: 0 2px 8px #0008;
+    }
+    @keyframes shine-move {
+      0% {
+        background-position: 0% 50%;
+      }
+      100% {
+        background-position: 200% 50%;
+      }
+    }
+    .avatar-glow {
+      box-shadow:
+        0 0 0 0 #43e97b88,
+        0 0 12px 4px #43e97b88,
+        0 0 32px 8px #38b2ac44,
+        0 0 64px 16px #43e97b33;
+      animation: avatar-glow-anim 2.5s infinite alternate;
+      border-radius: 50%;
+      transition: box-shadow 0.3s;
+    }
+    @keyframes avatar-glow-anim {
+      0% {
+        box-shadow:
+          0 0 0 0 #43e97b88,
+          0 0 12px 4px #43e97b88,
+          0 0 32px 8px #38b2ac44,
+          0 0 64px 16px #43e97b33;
+      }
+      100% {
+        box-shadow:
+          0 0 0 0 #43e97b44,
+          0 0 24px 8px #43e97bcc,
+          0 0 48px 16px #38b2ac66,
+          0 0 96px 32px #43e97b44;
+      }
+    }
+    body {
+      background-color: #181c20;
+      color: #e0e0e0;
+      font-family: 'Fira Mono', 'Consolas', 'Menlo', 'Monaco', monospace;
+      /* ปรับ padding สำหรับจอเล็ก */
+      padding-left: 0;
+      padding-right: 0;
+    }
+    .container {
+      max-width: 100vw;
+      padding-left: 0.5rem;
+      padding-right: 0.5rem;
+    }
+    .w-100 {
+      max-width: 480px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    /* Responsive: ปรับขนาดฟอร์มและฟอนต์สำหรับจอเล็ก */
+    @media (max-width: 600px) {
+      .container, body {
+        padding-left: 0.2rem;
+        padding-right: 0.2rem;
+      }
+      .p-4 {
+        padding: 1rem !important;
+      }
+      h1, .animated-title {
+        font-size: 1.3rem !important;
+      }
+      .btn, .btn-upload {
+        font-size: 1rem !important;
+        padding: 0.5rem 1.2rem !important;
+      }
+      .form-label, label {
+        font-size: 1rem !important;
+      }
+      .custom-upload-wrapper {
+        min-height: 38px;
+      }
+      .btn-upload span.filename-text {
+        max-width: 80px;
+        font-size: 0.95rem;
+      }
+      .pixel-progress {
+        height: 1.2rem;
+      }
+      #label-status {
+        min-width: 0;
+        max-width: 98vw;
+        font-size: 0.95rem;
+      }
+      .w-100 {
+        max-width: 98vw;
+      }
+    }
+    @media (max-width: 400px) {
+      .btn-upload span.filename-text {
+        max-width: 50px;
+        font-size: 0.9rem;
+      }
+      .form-label, label {
+        font-size: 0.95rem !important;
+      }
+      .w-100 {
+        max-width: 100vw;
+      }
+    }
+  </style>
+</head>
+<body class="container py-5 d-flex flex-column align-items-center justify-content-center" style="min-height:100vh;">
+  <div class="w-100">
+    <div class="text-center" style="margin-bottom: 0.5rem; margin-top: -1.5rem;">
+      <img src="https://avatars.githubusercontent.com/u/211930336?v=4" alt="avatar" class="avatar-glow" style="width:64px;height:64px;border-radius:50%;box-shadow:0 2px 8px #0006;object-fit:cover;">
+    </div>
+    <h1 class="mb-4 text-center animated-title">Nop's Converter</h1>
+    <form method="POST" enctype="multipart/form-data" id="convert-form" class="p-4 rounded shadow" style="background:#20262b;">
+      <div class="mb-3">
+        <label for="image" class="form-label">Choose Image</label>
+        <div class="custom-upload-wrapper position-relative">
+          <input class="form-control custom-upload-input" type="file" name="image" id="image" required style="opacity:0;position:absolute;left:0;top:0;width:100%;height:100%;z-index:2;cursor:pointer;">
+          <button type="button" id="upload-btn" class="btn btn-upload w-100" tabindex="-1">
+            <span id="upload-btn-text">
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" style="vertical-align:middle;margin-right:8px;">
+                <path fill="#43e97b" d="M12 16a1 1 0 0 1-1-1V7.83l-2.59 2.58a1 1 0 1 1-1.42-1.42l4.3-4.3a1 1 0 0 1 1.42 0l4.3 4.3a1 1 0 1 1-1.42 1.42L13 7.83V15a1 1 0 0 1-1 1Z"/>
+                <path fill="#43e97b" d="M20 18a1 1 0 0 1-1 1H5a1 1 0 1 1 0-2h14a1 1 0 0 1 1 1Z"/>
+              </svg>
+              Upload Image
+            </span>
+          </button>
+        </div>
+      </div>
+      <div class="mb-3">
+        <label for="format" class="form-label">Convert to</label>
+        <select class="form-select" name="format" id="format-select" required>
+          {% for fmt, label in supported_formats %}
+          <option value="{{ fmt }}">{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div id="pdf-options" style="display:none;">
+        <div class="mb-3">
+          <label for="dpi" class="form-label">DPI (Resolution)</label>
+          <input type="number" class="form-control" name="dpi" id="dpi-input" min="72" max="1200" value="400">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Format (Lossless)</label>
+          <select class="form-select" name="pdf_fmt" id="pdf-fmt-select">
+            <option value="png">PNG (lossless)</option>
+            <option value="tiff">TIFF (lossless, multi-page)</option>
+          </select>
+        </div>
+        <div class="mb-3 form-check">
+          <input type="checkbox" class="form-check-input" name="transparent" id="transparent-check" checked>
+          <label class="form-check-label" for="transparent-check">Preserve transparency (only PNG/TIFF)</label>
+        </div>
+      </div>
+      <div class="mb-3">
+        <label for="quality" class="form-label">Quality (1-100)</label>
+        <div class="d-flex align-items-center" style="gap:12px;">
+          <input class="form-range flex-grow-1 quality-range-custom" type="range" name="quality" id="quality-range" min="1" max="100" value="100" style="max-width:300px;">
+          <span class="range-value badge bg-success px-3 py-2" id="quality-value" style="font-size:1.1rem;">100</span>
+        </div>
+      </div>
+      <div class="d-flex justify-content-center">
+        <button class="btn btn-primary" type="submit">Convert</button>
+      </div>
+    </form>
+  </div>
+  <div id="progress-bar-backdrop" class="progress-backdrop" style="display:none;">
+    <div style="min-width:300px;max-width:90vw;">
+      <div class="mb-2 text-center" style="color:#4ecdc4;">Converting image, please wait...</div>
+      <div class="progress pixel-progress" style="height: 2rem;">
+        <div id="progress-bar" class="progress-bar pixel-progress-bar"
+             role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+          0%
+        </div>
+      </div>
+      <div class="text-center mt-3" id="download-btn-container" style="display:none;">
+        <button id="download-btn" class="btn btn-success me-2">Download</button>
+        <button id="cancel-btn" class="btn btn-secondary">Cancel</button>
+      </div>
+    </div>
+  </div>
+    <div id="label-status" style="position:fixed;left:50%;transform:translateX(-50%);bottom:12px;top:auto;width:auto;min-width:320px;max-width:90vw;">
+      <span style="vertical-align:middle;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" style="margin-bottom:2px;margin-right:4px;" viewBox="0 0 448 512" fill="#fff">
+          <path d="M224,202.66A53.34,53.34,0,1,0,277.34,256,53.38,53.38,0,0,0,224,202.66Zm124.71-41a54,54,0,0,0-30.36-30.36C293.19,117.34,224,117.34,224,117.34s-69.19,0-94.35,13.94a54,54,0,0,0-30.36,30.36C85.34,162.81,85.34,224,85.34,224s0,69.19,13.94,94.35a54,54,0,0,0,30.36,30.36C162.81,394.66,224,394.66,224,394.66s69.19,0,94.35-13.94a54,54,0,0,0,30.36-30.36C362.66,293.19,362.66,224,362.66,224S362.66,162.81,348.71,161.66ZM224,338.66A82.66,82.66,0,1,1,306.66,256,82.75,82.75,0,0,1,224,338.66Zm85.34-148A19.34,19.34,0,1,1,290,171.34,19.34,19.34,0,0,1,309.34,190.66Z"/>
+        </svg>
+        create by <b>htpe.nop</b> &nbsp;|&nbsp;
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" style="margin-bottom:2px;margin-right:2px;vertical-align:middle;" viewBox="0 0 24 24" fill="#fff">
+          <path d="M12 0C5.37 0 0 5.373 0 12c0 5.303 3.438 9.8 8.207 11.387.6.113.793-.26.793-.577 0-.285-.01-1.04-.016-2.04-3.338.726-4.042-1.61-4.042-1.61-.546-1.387-1.333-1.756-1.333-1.756-1.09-.745.083-.729.083-.729 1.205.085 1.84 1.237 1.84 1.237 1.07 1.834 2.809 1.304 3.495.997.108-.775.418-1.305.762-1.606-2.665-.304-5.466-1.334-5.466-5.932 0-1.31.469-2.381 1.236-3.221-.124-.303-.535-1.523.117-3.176 0 0 1.008-.322 3.301 1.23a11.52 11.52 0 0 1 3.003-.404c1.019.005 2.047.138 3.003.404 2.291-1.553 3.297-1.23 3.297-1.23.653 1.653.242 2.873.119 3.176.77.84 1.235 1.911 1.235 3.221 0 4.61-2.804 5.625-5.475 5.921.43.372.823 1.104.823 2.226 0 1.606-.015 2.898-.015 3.293 0 .32.192.694.8.576C20.565 21.796 24 17.298 24 12c0-6.627-5.373-12-12-12z"/>
+        </svg>
+        github <a href="https://github.com/noppakorn001" target="_blank" style="color:#fff;text-decoration:underline;">nop_labs</a>
+      </span>
+    </div>
+  <script>
+    const form = document.getElementById('convert-form');
+    const progressBackdrop = document.getElementById('progress-bar-backdrop');
+    const progressBar = document.getElementById('progress-bar');
+    const qualityRange = document.getElementById('quality-range');
+    const qualityValue = document.getElementById('quality-value');
+    const downloadBtn = document.getElementById('download-btn');
+    const cancelBtn = document.getElementById('cancel-btn');
+    const downloadBtnContainer = document.getElementById('download-btn-container');
+    let originalFileName = '';
+
+    // Update quality value label live
+    qualityRange.addEventListener('input', function() {
+      qualityValue.textContent = qualityRange.value;
+    });
+
+    // Set original value for quality label
+    qualityValue.textContent = qualityRange.value;
+
+    // AJAX submit to prevent auto download
+    form.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      progressBackdrop.style.display = 'flex';
+      downloadBtnContainer.style.display = 'none';
+      progressBar.style.width = '0%';
+      progressBar.setAttribute('aria-valuenow', 0);
+      progressBar.textContent = '0%';
+
+      const formData = new FormData(form);
+      originalFileName = form.image.files[0]?.name || 'converted';
+      originalFileName = originalFileName.replace(/\.[^/.]+$/, "");
+
+      // Use XMLHttpRequest for real progress
+      let blob;
+      let xhr = new XMLHttpRequest();
+      xhr.open('POST', window.location.pathname, true);
+
+      xhr.responseType = 'blob';
+
+      xhr.upload.onprogress = function(event) {
+        if (event.lengthComputable) {
+          let percent = Math.round((event.loaded / event.total) * 80); // 0-80% for upload
+          progressBar.style.width = percent + '%';
+          progressBar.setAttribute('aria-valuenow', percent);
+          progressBar.textContent = percent + '%';
+        }
+      };
+
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState === XMLHttpRequest.HEADERS_RECEIVED) {
+          // Upload done, start waiting for server process (simulate 80-99%)
+          let percent = 80;
+          let interval = setInterval(() => {
+            percent += 1;
+            if (percent >= 99) {
+              percent = 99;
+              clearInterval(interval);
+            }
+            progressBar.style.width = percent + '%';
+            progressBar.setAttribute('aria-valuenow', percent);
+            progressBar.textContent = percent + '%';
+          }, 80);
+          xhr._interval = interval;
+        }
+      };
+
+      xhr.onload = function() {
+        if (xhr._interval) clearInterval(xhr._interval);
+        progressBar.style.width = '100%';
+        progressBar.setAttribute('aria-valuenow', 100);
+        progressBar.textContent = '100%';
+        blob = xhr.response;
+        setTimeout(() => {
+          if (progressBackdrop.style.display === 'flex' && downloadBtnContainer.style.display !== 'block') {
+            downloadBtnContainer.style.display = 'block';
+          }
+        }, 300);
+      };
+
+      xhr.onerror = function() {
+        if (xhr._interval) clearInterval(xhr._interval);
+        progressBar.style.width = '100%';
+        progressBar.setAttribute('aria-valuenow', 100);
+        progressBar.textContent = 'Error';
+        downloadBtnContainer.style.display = 'none';
+        setTimeout(() => {
+          progressBackdrop.style.display = 'none';
+        }, 1000);
+      };
+
+      xhr.send(formData);
+
+      // Download on button click
+      downloadBtn.onclick = function() {
+        const url = URL.createObjectURL(blob);
+        // ตรวจสอบ header ว่าเป็น zip หรือไม่
+        let contentType = xhr.getResponseHeader('Content-Type');
+        let ext = form.format.value.toLowerCase();
+        let downloadName = originalFileName + '-convert.' + ext;
+        if (contentType && contentType.includes('zip')) {
+          downloadName = originalFileName + '-pages.zip';
+        }
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = downloadName;
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(() => {
+          URL.revokeObjectURL(url);
+          document.body.removeChild(a);
+          progressBackdrop.style.display = 'none';
+          // cleanup uploads folder
+          fetch('/cleanup_uploads', {method: 'POST'});
+        }, 500);
+      };
+
+      // Cancel button hides the dialog and discards the blob
+      cancelBtn.onclick = function() {
+        progressBackdrop.style.display = 'none';
+        blob = null;
+        xhr.abort();
+        // cleanup uploads folder
+        fetch('/cleanup_uploads', {method: 'POST'});
+      };
+    });
+
+    // Fallback for navigation (e.g. back/forward)
+    window.addEventListener('pageshow', function() {
+      progressBackdrop.style.display = 'none';
+    });
+
+    // Upload button animation and label update
+    const uploadBtn = document.getElementById('upload-btn');
+    const uploadBtnText = document.getElementById('upload-btn-text');
+    const imageInput = document.getElementById('image');
+    imageInput.addEventListener('change', function() {
+      if (imageInput.files.length > 0) {
+        uploadBtn.classList.add('filename-mode');
+        uploadBtnText.innerHTML =
+          '<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" style="vertical-align:middle;margin-right:8px;"><path fill="#43e97b" d="M12 16a1 1 0 0 1-1-1V7.83l-2.59 2.58a1 1 0 1 1-1.42-1.42l4.3-4.3a1 1 0 0 1 1.42 0l4.3 4.3a1 1 0 1 1-1.42 1.42L13 7.83V15a1 1 0 0 1-1 1Z"/><path fill="#43e97b" d="M20 18a1 1 0 0 1-1 1H5a1 1 0 1 1 0-2h14a1 1 0 0 1 1 1Z"/></svg>' +
+          '<span class="filename-text">' + imageInput.files[0].name + '</span>';
+      } else {
+        uploadBtn.classList.remove('filename-mode');
+        uploadBtnText.innerHTML =
+          '<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" style="vertical-align:middle;margin-right:8px;"><path fill="#43e97b" d="M12 16a1 1 0 0 1-1-1V7.83l-2.59 2.58a1 1 0 1 1-1.42-1.42l4.3-4.3a1 1 0 0 1 1.42 0l4.3 4.3a1 1 0 1 1-1.42 1.42L13 7.83V15a1 1 0 0 1-1 1Z"/><path fill="#43e97b" d="M20 18a1 1 0 0 1-1 1H5a1 1 0 1 1 0-2h14a1 1 0 0 1 1 1Z"/></svg>Upload Image';
+      }
+    });
+    uploadBtn.addEventListener('click', function() {
+      imageInput.click();
+    });
+
+    // Show PDF options if input is PDF
+    const pdfOptions = document.getElementById('pdf-options');
+    imageInput.addEventListener('change', function() {
+      const file = imageInput.files[0];
+      if (file && file.name.toLowerCase().endsWith('.pdf')) {
+        pdfOptions.style.display = '';
+      } else {
+        pdfOptions.style.display = 'none';
+      }
+    });
+
+    // Ensure PDF options are hidden on load
+    pdfOptions.style.display = 'none';
+  </script>
+</body>
+</html>

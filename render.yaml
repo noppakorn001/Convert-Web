@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: covert-app
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python app.py
+    envVars:
+      - key: PYTHONUNBUFFERED
+        value: "1"
+    plan: free
