@@ -2,3 +2,4 @@ Flask
 Pillow
 pillow-heif
 pdf2image
+gunicorn
