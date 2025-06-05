@@ -10,7 +10,7 @@ Built with **Python** (Flask) and **HTML**, it offers a clean interface to uploa
 ## ✨ Features
 
 - 🖼️ Convert between popular image formats (JPG, PNG, WEBP, HEIC, etc.)
-- 📄 Convert PDF files to other file types
+- 📄 Convert PDF files to image formats (e.g., PNG, JPG)
 - 🔧 Choose image output quality
 - 🎯 Select output file type
 - ⚡ Fast and lightweight design
@@ -19,23 +19,24 @@ Built with **Python** (Flask) and **HTML**, it offers a clean interface to uploa
 
 ## 🛠️ Built With
 
-- **Python** – for backend logic and image processing (via [Pillow](https://python-pillow.org/))
+- **Python** – for backend logic and image processing
 - **Flask** – as the web framework
+- **Pillow** – for image format conversion
+- **Poppler** – to convert PDF files to images (`pdf2image` uses Poppler)
 - **HTML/CSS** – for the frontend UI
 - **Gunicorn** – WSGI server for production deployment
 - **Render** – hosting platform for deployment
 
 ---
 
-## 📸 Screenshots
+## 📦 Requirements (Local)
 
-Coming soon...
+Make sure you have **Poppler** installed before running locally.
 
----
-
-## 🚧 Installation (For Local Use)
-
-```bash
+- 🔗 [Poppler for Windows](http://blog.alivate.com.au/poppler-windows/)
+- On macOS:  
+  ```bash
+  brew install poppler
 # Clone this repository
 git clone https://github.com/noppakorn001/Convert-Web.git
 cd Convert-Web
