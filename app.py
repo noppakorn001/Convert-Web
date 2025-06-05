@@ -45,7 +45,7 @@ def index():
             dpi = int(request.form.get("dpi", 400))
             pdf_fmt = request.form.get("pdf_fmt", convert_to.lower()).lower()
             transparent = request.form.get("transparent") == "on"
-            poppler_path = r"poppler\Library\bin"
+            poppler_path = r"poppler/Library/bin"
 
             try:
                 images = convert_from_path(
