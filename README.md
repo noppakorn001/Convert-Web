@@ -46,3 +46,4 @@ pip install -r requirements.txt
 
 # Run the development server
 python app.py
+gunicorn app:app
