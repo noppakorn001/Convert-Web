@@ -5,6 +5,10 @@ Built with **Python** (Flask) and **HTML**, it offers a clean interface to uploa
 
 🚀 **Live Demo:** [https://convert-web.onrender.com](https://convert-web.onrender.com)
 
+> ⚠️ **Notice:** PDF to image conversion is **not supported** on Render.  
+> This is because the Render environment **does not include Poppler**, which is required by `pdf2image`.  
+> To use PDF conversion, please run the app **locally** or on a server where **Poppler is installed**.
+
 ---
 
 ## ✨ Features
@@ -46,4 +50,6 @@ pip install -r requirements.txt
 
 # Run the development server
 python app.py
+
+# Or run in production with Gunicorn
 gunicorn app:app
