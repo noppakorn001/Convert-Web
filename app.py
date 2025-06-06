@@ -41,7 +41,12 @@ def index():
         is_lossless = convert_to.lower() == "lossless"
         multipage = False
 
+        # Check if running on Render or in a restricted environment
+        is_render = os.environ.get("RENDER", "0") == "1" or os.environ.get("RENDER_EXTERNAL_HOSTNAME") is not None
+
         if ext == ".pdf" and convert_to.lower() != "pdf":
+            if is_render:
+                return "PDF conversion is not supported on this hosting platform.", 400
             dpi = int(request.form.get("dpi", 400))
             pdf_fmt = request.form.get("pdf_fmt", convert_to.lower()).lower()
             transparent = request.form.get("transparent") == "on"
