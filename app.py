@@ -45,7 +45,23 @@ def index():
             dpi = int(request.form.get("dpi", 400))
             pdf_fmt = request.form.get("pdf_fmt", convert_to.lower()).lower()
             transparent = request.form.get("transparent") == "on"
-            poppler_path = r"poppler/Library/bin"
+
+            # --- Unzip poppler.zip if not already unzipped and set poppler_path ---
+            poppler_zip = os.path.join(os.getcwd(), "poppler.zip")
+            poppler_dir = os.path.join(os.getcwd(), "poppler")
+            if not os.path.isdir(poppler_dir):
+                import zipfile
+                if os.path.isfile(poppler_zip):
+                    with zipfile.ZipFile(poppler_zip, 'r') as zip_ref:
+                        zip_ref.extractall(poppler_dir)
+            # Try to find the bin directory inside poppler
+            poppler_path = None
+            for root, dirs, files in os.walk(poppler_dir):
+                if os.path.basename(root).lower() == "bin":
+                    poppler_path = root
+                    break
+            if not poppler_path:
+                poppler_path = poppler_dir  # fallback
 
             try:
                 images = convert_from_path(
