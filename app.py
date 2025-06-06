@@ -30,6 +30,12 @@ def get_lossless_format(ext, multipage=False):
 
 @app.route("/", methods=["GET", "POST"])
 def index():
+    pdf_disabled = False
+    # Check if running on Render or in a restricted environment
+    is_render = os.environ.get("RENDER", "0") == "1" or os.environ.get("RENDER_EXTERNAL_HOSTNAME") is not None
+    if is_render:
+        pdf_disabled = True
+
     if request.method == "POST":
         image_file = request.files['image']
         convert_to = request.form['format']
@@ -46,7 +52,7 @@ def index():
 
         if ext == ".pdf" and convert_to.lower() != "pdf":
             if is_render:
-                return "PDF conversion is not supported on this hosting platform.", 400
+                return render_template("index.html", supported_formats=SUPPORTED_FORMATS, pdf_disabled=pdf_disabled, error="PDF conversion is not supported on this hosting platform.")
             dpi = int(request.form.get("dpi", 400))
             pdf_fmt = request.form.get("pdf_fmt", convert_to.lower()).lower()
             transparent = request.form.get("transparent") == "on"
@@ -279,7 +285,7 @@ def index():
 
             return send_file(output_path, as_attachment=True)
 
-    return render_template("index.html", supported_formats=SUPPORTED_FORMATS)
+    return render_template("index.html", supported_formats=SUPPORTED_FORMATS, pdf_disabled=pdf_disabled)
 
 @app.route("/cleanup_uploads", methods=["POST"])
 def cleanup_uploads():
